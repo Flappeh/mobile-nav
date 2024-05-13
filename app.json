@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Mobile Navigation",
+    "name": "Mobile Navigation App",
     "slug": "mobile-nav",
     "version": "1.0.0",
     "scheme": "mobile-nav",
@@ -22,7 +22,8 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
     "plugins": [
       "expo-router"

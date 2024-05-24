@@ -1,25 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, Dispatch, SetStateAction } from "react";
 import { getCurrentUser } from "../lib/appwrite";
 
-interface LoggedInUser {
-    username: string
-    email: string
-    avatar: string
-    accountId: string
-}
-
-interface GlobalContextType {
-    isLoggedIn: boolean
-    setIsLoggedIn: Dispatch<SetStateAction<boolean>>
-    user: any
-    setUser: any
-    isLoading: boolean
-}
-
-type ContextProviderProps = {
-    children?: ReactNode
-}
-
 const GlobalContext = createContext<GlobalContextType>(null as any);
 
 export const useGlobalContext = () => useContext(GlobalContext);

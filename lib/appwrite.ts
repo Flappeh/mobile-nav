@@ -1,13 +1,27 @@
 import { Account, Avatars, Client, Databases, ID, Query } from "react-native-appwrite";
+
 export const config = {
     endpoint: "https://appwrite.flappeh.my.id/v1",
     platform: "com.flappeh.aora",
-    projectId: "66490922003b3b22a5d1",
-    databaseId: "664912c5002c579f433b",
-    userCollectionId: "66491307000951aa8017",
-    videoCollectionId: "6649131600230f284423",
-    storageId: "664a50f80027b5871dca",
+    projectId: "664dd7b40010c14edacb",
+    databaseId: "664dd86a001621a53706",
+    userCollectionId: "664dd93a001e862dd2a8",
+    videoCollectionId: "664dd933001385e4b129",
+    storageId: "664dd8bb0038ebf20263",
 };
+
+
+
+
+// export const config = {
+//     endpoint: "http://192.168.18.221:8080/v1",
+//     platform: "com.flappeh.aora",
+//     projectId: "664cfb7b0030fbc2aa98",
+//     storageId: "664cfc10002bb3fdf3a7",
+//     databaseId: "664cfbff00074e670600",
+//     userCollectionId: "664cfc4800215058bb02",
+//     videoCollectionId: "664cfca00014036a620d",
+// };
 
 // Init your React Native SDK
 const client = new Client();
@@ -84,5 +98,34 @@ export const getCurrentUser = async () => {
     }
     catch(err){
         throw Error("Error on retrieving user data")
+    }
+}
+
+export const getAllPosts = async () => {
+    try{
+        const posts = await databases.listDocuments(
+            config.databaseId,
+            config.videoCollectionId,
+        )
+        return posts.documents
+    }
+    catch(err){
+        console.log(err)
+        throw Error('Error retrieving posts')
+    }
+}
+
+export const getLatestPosts = async () => {
+    try{
+        const posts = await databases.listDocuments(
+            config.databaseId,
+            config.videoCollectionId,
+            [Query.orderDesc('$createdAt'),Query.limit(7)]
+        )
+        return posts.documents
+    }
+    catch(err){
+        console.log(err)
+        throw Error('Error retrieving posts')
     }
 }

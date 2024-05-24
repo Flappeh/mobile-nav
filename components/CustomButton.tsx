@@ -1,13 +1,6 @@
 import { View, TouchableOpacity,Text } from 'react-native'
 import React from 'react'
 
-interface buttonProps{
-    title: string,
-    handlePress?: ()=> {} | undefined | null,
-    containerStyles?: string,
-    textStyles?: string,
-    isLoading?: boolean
-}
 
 const CustomButton = ({title, handlePress, containerStyles, textStyles, isLoading}: buttonProps) => {
   return (

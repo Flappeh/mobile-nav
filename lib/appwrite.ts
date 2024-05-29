@@ -1,4 +1,4 @@
-import { Account, Avatars, Client, Databases, ID, Query } from "react-native-appwrite";
+import { Account, Avatars, Client, Databases, ID, Query, Storage } from "react-native-appwrite";
 
 export const config = {
     endpoint: "https://appwrite.flappeh.my.id/v1",
@@ -34,7 +34,7 @@ client
 const account = new Account(client);
 const avatars = new Avatars(client)
 const databases = new Databases(client);
-
+const storage = new Storage(client);
 
 export const createUser = async ({email, username, password}: userCreate) => {
     try{
@@ -93,7 +93,6 @@ export const getCurrentUser = async () => {
         )
 
         if(!currentUser) throw Error
-        console.log(currentUser.documents[0])
         return currentUser.documents[0]
     }
     catch(err){
@@ -106,6 +105,7 @@ export const getAllPosts = async () => {
         const posts = await databases.listDocuments(
             config.databaseId,
             config.videoCollectionId,
+            [Query.orderDesc('$createdAt')]
         )
         return posts.documents
     }
@@ -120,12 +120,117 @@ export const getLatestPosts = async () => {
         const posts = await databases.listDocuments(
             config.databaseId,
             config.videoCollectionId,
-            [Query.orderDesc('$createdAt'),Query.limit(7)]
+            [Query.orderDesc('$createdAt'),Query.limit(5)]
         )
         return posts.documents
     }
     catch(err){
         console.log(err)
         throw Error('Error retrieving posts')
+    }
+}
+
+export const searchPosts = async (query: any) => {
+    try{
+        const posts = await databases.listDocuments(
+            config.databaseId,
+            config.videoCollectionId,
+            [Query.contains('title', query)]
+        )
+        return posts.documents
+    }
+    catch(err){
+        console.log(err)
+        throw Error('Error retrieving posts')
+    }
+}
+
+export const getUserPosts = async (userID: string) => {
+    try{
+        const posts = await databases.listDocuments(
+            config.databaseId,
+            config.videoCollectionId,
+            [Query.equal('creator', userID)]
+        )
+        return posts.documents
+    }
+    catch(err){
+        console.log(err)
+        throw Error('Error retrieving posts')
+    }
+}
+
+export const signOut = async () => {
+    try{
+        const session = await account.deleteSession('current')
+        return session
+    }
+    catch(err){
+        throw Error(err as string)
+    }
+}
+
+export const uploadVideo = async (form:any) => {
+    try{
+        const [thumbnailUrl, videoUrl] = await Promise.all([
+            uploadFile(form.thumbnail, 'image'),
+            uploadFile(form.video, 'video')
+        ])
+        const newPost = await databases.createDocument(
+            config.databaseId,
+            config.videoCollectionId,
+            ID.unique(),
+            {
+                title: form.title,
+                thumbnail: thumbnailUrl,
+                video: videoUrl,
+                prompt: form.prompt,
+                creator: form.userId
+            }
+        )
+        return newPost;
+    }
+    catch(err){
+        throw new Error(err)
+    }
+}
+
+export const uploadFile = async (file: any, type: any)=>{
+    if (!file) return;
+    const asset = {
+        name: file.fileName,
+        type: file.mimeType,
+        size: file.fileSize,
+        uri: file.uri
+
+    };
+    try{
+        const uploadedFile = await storage.createFile(
+            config.storageId,
+            ID.unique(),
+            asset
+        );
+        const fileUrl = await getFilePreview(uploadedFile.$id, type)
+        return fileUrl
+    }catch(err){
+        throw new Error(err)
+    }
+}
+
+export const getFilePreview = (fileId: string, type: string) => {
+    let fileUrl;
+    try {
+        if(type === 'video'){
+            fileUrl = storage.getFileView(config.storageId, fileId)
+        }else if (type === 'image'){
+            fileUrl = storage.getFilePreview(config.storageId, fileId, 2000, 2000, 'top', 100)
+        }else{
+            throw new Error('Invalid file type')
+        }
+        if(!fileUrl) throw Error;
+        return fileUrl;
+    }
+    catch (error) {
+        throw new Error(error)
     }
 }

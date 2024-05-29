@@ -10,6 +10,18 @@ interface userSignIn{
     password: string
 }
 
+interface userData{
+    $collectionId: string,
+    $createdAt: string,
+    $databaseId: string,
+    $id: string,
+    $permissions: any,
+    updatedAt: string,
+    accountId: string,
+    avatar: string,
+    email: string,
+    username: string
+}
 
 // Global Provider
 interface LoggedInUser {
@@ -22,10 +34,11 @@ interface LoggedInUser {
 interface GlobalContextType {
     isLoggedIn: boolean
     setIsLoggedIn: Dispatch<SetStateAction<boolean>>
-    user: any
+    user?: userData | null
     setUser: any
     isLoading: boolean
 }
+
 
 type ContextProviderProps = {
     children?: ReactNode
@@ -53,10 +66,10 @@ interface EmptyProps{
 // VideoCard Component
 
 interface VideoProps{
-    $id?: string,
+    $id: string,
     title: string,
     thumbnail?: string,
-    video?: string,
+    video: string,
     creator?: LoggedInUser
 }
 
@@ -74,11 +87,8 @@ interface FormInterface{
 // Search Component
 
 interface SearchInterface{
-    value: string,
-    placeholder?: string,
-    handleChangeText?: (e: any) => any,
-    otherStyles?: string,
-    keyboardType?: string
+    initialQuery: any,
+    placeholder
 }
 
 // Video Card / Trending Component
@@ -93,4 +103,13 @@ interface Post{
 
 interface TrendingProps{
     video: VideoProps[]
+}
+
+// InfoBox Component
+
+interface InfoBoxProps{
+    title: string,
+    subtitle?: string,
+    containerStyles?: string,
+    titleStyles?: string
 }

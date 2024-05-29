@@ -66,7 +66,7 @@ const SignIn = () => {
               title="Password"
               value={form.password}
               handleChangeText={(e:Event) => {
-                setForm({...form, password: e})
+                setForm({...form, password:  e})
               }}
               otherStyles="mt-7"
               />

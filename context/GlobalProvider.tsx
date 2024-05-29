@@ -8,7 +8,7 @@ export const useGlobalContext = () => useContext(GlobalContext);
 
 export const GlobalProvider = ({children}:ContextProviderProps) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<userData | null>(null)
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
@@ -16,7 +16,7 @@ export const GlobalProvider = ({children}:ContextProviderProps) => {
             .then((res) => {
                 if (res){
                     setIsLoggedIn(true);
-                    setUser(res);
+                    setUser(res as unknown as userData);
                 }
                 else{
                     setIsLoggedIn(false)
